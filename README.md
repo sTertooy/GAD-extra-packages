@@ -16,9 +16,9 @@ package. By default it does absolutely nothing.
 This can be customized via the PACKAGES-variable:
 
 - `PACKAGES`:
-   - A space-separated list of the GAP packages to clone.
+   - Clones and builds any packages specified in the PACKAGES parameter
    - default: `''`
-   - example: `''`
+   - example: `'alnuth autpgrp polycyclic'`
 
 
 ## License
