@@ -1,0 +1,39 @@
+name: 'Clone and build extra packages'
+description: 'Downloads and compiles any packages specified in the PACKAGES parameter'
+inputs:
+  PACKAGES:
+    description: 'the GAP packages to clone'
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+      - name: "Clone packages"
+        shell: bash
+        run: |
+          cd /opt/gap/pkg
+          for pkg in ${{ inputs.PACKAGES }}; do
+              rm -rf "${pkg##*/}"*
+              if [[ "$pkg" =~ ^http ]] ; then
+                  # looks like a full URL
+                  git clone "$pkg"
+              elif [[ "$pkg" =~ ^[^/]+/[^/]+$ ]] ; then
+                  # looks like ORG/REPO
+                  git clone https://github.com/"$pkg"
+              elif [[ "$pkg" =~ ^[^/]+$ ]] ; then
+                  # looks like just a REPO name
+                  git clone https://github.com/gap-packages/"$pkg"
+              else
+                  echo "Invalid package"
+                  exit 1
+              fi
+          done
+      - name: "Build packages"
+        shell:  bash
+        run: |
+          BuildPackagesOptions="--strict"
+          cd /opt/gap/pkg
+          for pkg in ${{ inputs.PACKAGES}}; do
+              ../bin/BuildPackages.sh ${BuildPackagesOptions} $pkg*
+          done
