@@ -17,13 +17,13 @@ runs:
               rm -rf "${pkg##*/}"*
               if [[ "$pkg" =~ ^http ]] ; then
                   # looks like a full URL
-                  git clone "$pkg"
+                  git clone --depth 1 "$pkg"
               elif [[ "$pkg" =~ ^[^/]+/[^/]+$ ]] ; then
                   # looks like ORG/REPO
-                  git clone https://github.com/"$pkg"
+                  git clone --depth 1 https://github.com/"$pkg"
               elif [[ "$pkg" =~ ^[^/]+$ ]] ; then
                   # looks like just a REPO name
-                  git clone https://github.com/gap-packages/"$pkg"
+                  git clone --depth 1 https://github.com/gap-packages/"$pkg"
               else
                   echo "Invalid package"
                   exit 1
