@@ -1,8 +1,8 @@
 name: 'Clone and build extra packages'
-description: 'Downloads and compiles any packages specified in the PACKAGES parameter'
+description: 'Clones and builds any packages specified in the PACKAGES parameter'
 inputs:
   PACKAGES:
-    description: 'the GAP packages to clone'
+    description: 'List of GAP packages to clone and build'
     required: false
     default: ''
 
