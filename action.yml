@@ -1,10 +1,10 @@
-name: 'Clone and build extra packages'
-description: 'Clones and builds any packages specified in the PACKAGES parameter'
+name: "Install extra GAP packages"
+description: "Clones and builds any GAP packages specified in the PACKAGES parameter"
 inputs:
   PACKAGES:
-    description: 'List of GAP packages to clone and build'
+    description: "List of extra GAP packages to clone and build"
     required: false
-    default: ''
+    default: ""
 
 runs:
   using: "composite"
