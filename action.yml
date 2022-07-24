@@ -39,7 +39,7 @@ runs:
           cd /tmp/gaproot/pkg
                     
           for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
-              cd $pkg
+              cd $pkg*
               if [[ -x prerequisites.sh ]]; then
                   ./prerequisites.sh $GAPROOT
               fi
