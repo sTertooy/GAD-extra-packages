@@ -54,5 +54,5 @@ runs:
                   ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
                   make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
               fi
-              cd ../
+              cd /tmp/gaproot/pkg
           done
