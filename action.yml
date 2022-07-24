@@ -1,7 +1,11 @@
 name: "Install extra GAP packages"
-description: "Clones and builds any GAP packages specified in the PACKAGES parameter"
+description: "Clones and builds additional GAP packages"
 inputs:
-  PACKAGES:
+  PACKAGES_TO_CLONE:
+    description: "List of extra GAP packages to clone and build"
+    required: false
+    default: ""
+  PACKAGES_TO_BUILD:
     description: "List of extra GAP packages to clone and build"
     required: false
     default: ""
@@ -12,9 +16,9 @@ runs:
       - name: "Clone packages"
         shell: bash
         run: |
-          cd /opt/gap/pkg
-          for pkg in ${{ inputs.PACKAGES }}; do
-              rm -rf "${pkg##*/}"*
+          cd /tmp/gaproot/pkg
+          
+          for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
               if [[ "$pkg" =~ ^http ]] ; then
                   # looks like a full URL
                   git clone --depth 1 "$pkg"
@@ -32,8 +36,23 @@ runs:
       - name: "Build packages"
         shell:  bash
         run: |
-          BuildPackagesOptions="--strict"
-          cd /opt/gap/pkg
-          for pkg in ${{ inputs.PACKAGES}}; do
-              ../bin/BuildPackages.sh ${BuildPackagesOptions} $pkg*
+          cd /tmp/gaproot/pkg
+                    
+          for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
+              cd $pkg
+              if [[ -x prerequisites.sh ]]; then
+                  ./prerequisites.sh $GAPROOT
+              fi
+              if [[ -x autogen.sh ]]; then
+                  ./autogen.sh
+              fi
+              if grep Autoconf ./configure > /dev/null
+              then
+                  ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
+                  make -j4 V=1
+              elif [[ -x configure ]]; then
+                  ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
+                  make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
+              fi
+              cd ../
           done
