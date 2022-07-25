@@ -2,11 +2,11 @@ name: "Install extra GAP packages"
 description: "Clones and builds additional GAP packages"
 inputs:
   PACKAGES_TO_CLONE:
-    description: "List of extra GAP packages to clone and build"
+    description: "List of extra GAP packages to clone"
     required: false
     default: ""
   PACKAGES_TO_BUILD:
-    description: "List of extra GAP packages to clone and build"
+    description: "List of extra GAP packages to build"
     required: false
     default: ""
 
