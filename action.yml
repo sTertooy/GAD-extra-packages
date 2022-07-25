@@ -10,17 +10,13 @@ inputs:
     required: false
     default: ""
 
-defaults:
-  run:
-    shell: bash
-    working-directory: /tmp/gaproot/pkg
-
 runs:
   using: "composite"
   steps:
   
     - name: "Clone packages"
       shell: bash
+      working-directory: /tmp/gaproot/pkg
       run: |
         set -ex
         
@@ -42,6 +38,7 @@ runs:
         
     - name: "Build packages"
       shell:  bash
+      working-directory: /tmp/gaproot/pkg
       run: |
         set -ex
                   
