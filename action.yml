@@ -10,6 +10,11 @@ inputs:
     required: false
     default: ""
 
+defaults:
+  run:
+    shell: bash
+    working-directory: /tmp/gaproot/pkg
+
 runs:
   using: "composite"
   steps:
@@ -18,8 +23,6 @@ runs:
       shell: bash
       run: |
         set -ex
-        
-        cd /tmp/gaproot/pkg
         
         for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
             if [[ "$pkg" =~ ^http ]] ; then
@@ -41,8 +44,6 @@ runs:
       shell:  bash
       run: |
         set -ex
-        
-        cd /tmp/gaproot/pkg
                   
         for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
             cd $pkg*
@@ -60,5 +61,5 @@ runs:
                 ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
                 make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
             fi
-            cd /tmp/gaproot/pkg
+            cd ../
         done
