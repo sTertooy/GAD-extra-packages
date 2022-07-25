@@ -1,12 +1,8 @@
 name: "Install extra GAP packages"
 description: "Clones and builds additional GAP packages"
 inputs:
-  PACKAGES_TO_CLONE:
-    description: "List of extra GAP packages to clone"
-    required: false
-    default: ""
-  PACKAGES_TO_BUILD:
-    description: "List of extra GAP packages to build"
+  PACKAGES:
+    description: "List of extra GAP packages to clone and build"
     required: false
     default: ""
 
@@ -14,36 +10,28 @@ runs:
   using: "composite"
   steps:
   
-    - name: "Clone packages"
+    - name: "Clone and build packages"
       shell: bash
       working-directory: /tmp/gaproot/pkg
       run: |
         set -ex
         
         for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
+            pkgName=$(basename $URL .git)
             if [[ "$pkg" =~ ^http ]] ; then
                 # looks like a full URL
-                git clone --depth 1 "$pkg"
+                git clone --depth 1 "$pkg" "$pkgName"
             elif [[ "$pkg" =~ ^[^/]+/[^/]+$ ]] ; then
                 # looks like ORG/REPO
-                git clone --depth 1 https://github.com/"$pkg"
+                git clone --depth 1 https://github.com/"$pkg" "$pkgName"
             elif [[ "$pkg" =~ ^[^/]+$ ]] ; then
                 # looks like just a REPO name
-                git clone --depth 1 https://github.com/gap-packages/"$pkg"
+                git clone --depth 1 https://github.com/gap-packages/"$pkg" "$pkgName"
             else
                 echo "Invalid package"
                 exit 1
             fi
-        done
-        
-    - name: "Build packages"
-      shell:  bash
-      working-directory: /tmp/gaproot/pkg
-      run: |
-        set -ex
-                  
-        for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
-            cd $pkg*
+            cd $pkgName
             if [[ -x prerequisites.sh ]]; then
                 ./prerequisites.sh $GAPROOT
             fi
