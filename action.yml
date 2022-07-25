@@ -16,6 +16,8 @@ runs:
       run: |
         set -ex
         
+        GAPROOT=/opt/gap
+        
         for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
             pkgName=$(basename $URL .git)
             if [[ "$pkg" =~ ^http ]] ; then
