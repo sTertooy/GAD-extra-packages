@@ -13,46 +13,52 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: "Clone packages"
-        shell: bash
-        run: |
-          cd /tmp/gaproot/pkg
-          
-          for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
-              if [[ "$pkg" =~ ^http ]] ; then
-                  # looks like a full URL
-                  git clone --depth 1 "$pkg"
-              elif [[ "$pkg" =~ ^[^/]+/[^/]+$ ]] ; then
-                  # looks like ORG/REPO
-                  git clone --depth 1 https://github.com/"$pkg"
-              elif [[ "$pkg" =~ ^[^/]+$ ]] ; then
-                  # looks like just a REPO name
-                  git clone --depth 1 https://github.com/gap-packages/"$pkg"
-              else
-                  echo "Invalid package"
-                  exit 1
-              fi
-          done
-      - name: "Build packages"
-        shell:  bash
-        run: |
-          cd /tmp/gaproot/pkg
-                    
-          for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
-              cd $pkg*
-              if [[ -x prerequisites.sh ]]; then
-                  ./prerequisites.sh $GAPROOT
-              fi
-              if [[ -x autogen.sh ]]; then
-                  ./autogen.sh
-              fi
-              if grep Autoconf ./configure > /dev/null
-              then
-                  ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
-                  make -j4 V=1
-              elif [[ -x configure ]]; then
-                  ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
-                  make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
-              fi
-              cd /tmp/gaproot/pkg
-          done
+  
+    - name: "Clone packages"
+      shell: bash
+      run: |
+        set -ex
+        
+        cd /tmp/gaproot/pkg
+        
+        for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
+            if [[ "$pkg" =~ ^http ]] ; then
+                # looks like a full URL
+                git clone --depth 1 "$pkg"
+            elif [[ "$pkg" =~ ^[^/]+/[^/]+$ ]] ; then
+                # looks like ORG/REPO
+                git clone --depth 1 https://github.com/"$pkg"
+            elif [[ "$pkg" =~ ^[^/]+$ ]] ; then
+                # looks like just a REPO name
+                git clone --depth 1 https://github.com/gap-packages/"$pkg"
+            else
+                echo "Invalid package"
+                exit 1
+            fi
+        done
+        
+    - name: "Build packages"
+      shell:  bash
+      run: |
+        set -ex
+        
+        cd /tmp/gaproot/pkg
+                  
+        for pkg in ${{ inputs.PACKAGES_TO_BUILD }}; do
+            cd $pkg*
+            if [[ -x prerequisites.sh ]]; then
+                ./prerequisites.sh $GAPROOT
+            fi
+            if [[ -x autogen.sh ]]; then
+                ./autogen.sh
+            fi
+            if grep Autoconf ./configure > /dev/null
+            then
+                ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
+                make -j4 V=1
+            elif [[ -x configure ]]; then
+                ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
+                make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
+            fi
+            cd /tmp/gaproot/pkg
+        done
