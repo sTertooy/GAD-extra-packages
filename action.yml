@@ -18,7 +18,7 @@ runs:
         
         GAPROOT=/opt/gap
         
-        for pkg in ${{ inputs.PACKAGES_TO_CLONE }}; do
+        for pkg in ${{ inputs.PACKAGES }}; do
             pkgName=$(basename $URL .git)
             if [[ "$pkg" =~ ^http ]] ; then
                 # looks like a full URL
