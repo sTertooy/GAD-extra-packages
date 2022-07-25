@@ -19,7 +19,7 @@ runs:
         GAPROOT=/opt/gap
         
         for pkg in ${{ inputs.PACKAGES }}; do
-            pkgName=$(basename $URL .git)
+            pkgName=$(basename $pkg .git)
             if [[ "$pkg" =~ ^http ]] ; then
                 # looks like a full URL
                 git clone --depth 1 "$pkg" "$pkgName"
