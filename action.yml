@@ -12,9 +12,10 @@ runs:
   
     - name: "Clone and build packages"
       shell: bash
-      working-directory: /tmp/gaproot/pkg
       run: |
         set -ex
+        
+        cd $GAP_ROOT/pkg
         
         for pkg in ${{ inputs.PACKAGES }}; do
             pkgName=$(basename $pkg .git)
