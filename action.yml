@@ -16,8 +16,6 @@ runs:
       run: |
         set -ex
         
-        GAPROOT=/opt/gap
-        
         for pkg in ${{ inputs.PACKAGES }}; do
             pkgName=$(basename $pkg .git)
             if [[ "$pkg" =~ ^http ]] ; then
@@ -35,17 +33,17 @@ runs:
             fi
             cd $pkgName
             if [[ -x prerequisites.sh ]]; then
-                ./prerequisites.sh $GAPROOT
+                ./prerequisites.sh $GAP_HOME
             fi
             if [[ -x autogen.sh ]]; then
                 ./autogen.sh
             fi
             if grep Autoconf ./configure > /dev/null
             then
-                ./configure --with-gaproot=$GAPROOT ${{ inputs.CONFIGFLAGS }}
+                ./configure --with-gaproot=$GAP_HOME ${{ inputs.CONFIGFLAGS }}
                 make -j4 V=1
             elif [[ -x configure ]]; then
-                ./configure ${{ inputs.CONFIGFLAGS }} $GAPROOT
+                ./configure ${{ inputs.CONFIGFLAGS }} $GAP_HOME
                 make -j4 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
             fi
             cd ../
